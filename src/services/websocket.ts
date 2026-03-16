@@ -1,16 +1,23 @@
 import { useStore } from "../store";
-import type { ITickerResponse } from "../types";
+import type {
+  ITickerResponse,
+  IOrderBookResponse,
+  ITickerKeys,
+} from "../types";
 import {
   CONNECTION_STATUS,
   CRYPTO_ITEMS,
-  DATA_INTERVAL_MS,
+  DATA_UPDATE_INTERVAL_MS,
   INTERVAL_TYPES,
+  SUBSCRIBE_KEY,
+  UNSUBSCRIBE_KEY,
   WEBSOCKET_URL,
 } from "../utils/constants";
 
 class WebSocketManager {
   private socket: WebSocket | null = null;
-  private tickerData = new Map<string, ITickerResponse>();
+  private tickerData = new Map<ITickerKeys, ITickerResponse>();
+  private latestOrderBook: IOrderBookResponse | null = null;
   private updateInterval: ReturnType<typeof setInterval> | null = null;
 
   public connect() {
@@ -65,16 +72,26 @@ class WebSocketManager {
       const store = useStore.getState();
 
       if (this.tickerData.size > 0) {
-        store.updateTickers(Object.fromEntries(this.tickerData));
+        store.updateTickers(Object.fromEntries(this.tickerData) as Record<ITickerKeys, ITickerResponse>);
         this.tickerData.clear();
       }
-    }, DATA_INTERVAL_MS);
+
+      if (this.latestOrderBook) {
+        store.updateOrderBook(this.latestOrderBook);
+        this.latestOrderBook = null;
+      }
+    }, DATA_UPDATE_INTERVAL_MS);
   }
 
-  private handleMessage(data: ITickerResponse) {
+  private handleMessage(data: ITickerResponse | IOrderBookResponse) {
     switch (data.type) {
       case INTERVAL_TYPES.TICKER:
-        this.tickerData.set(data.symbol, data as ITickerResponse);
+        this.tickerData.set(data.symbol, data);
+        break;
+      case INTERVAL_TYPES.ORDERBOOK:
+        this.latestOrderBook = data;
+        break;
+      default:
         break;
     }
   }
@@ -84,6 +101,41 @@ class WebSocketManager {
       clearInterval(this.updateInterval);
       this.updateInterval = null;
     }
+  }
+
+  public changeSymbol(newSymbol: ITickerKeys) {
+    const store = useStore.getState();
+    const oldSymbol = store.focusedSymbol;
+    if (
+      oldSymbol === newSymbol ||
+      !this.socket ||
+      this.socket.readyState !== WebSocket.OPEN
+    ) {
+      return;
+    }
+
+    store.clearFocusedData();
+    this.latestOrderBook = null;
+
+    this.socket.send(
+      JSON.stringify({
+        type: UNSUBSCRIBE_KEY,
+        payload: {
+          channels: [{ name: INTERVAL_TYPES.ORDERBOOK, symbols: [oldSymbol] }],
+        },
+      }),
+    );
+
+    store.setFocusedSymbol(newSymbol);
+
+    this.socket.send(
+      JSON.stringify({
+        type: SUBSCRIBE_KEY,
+        payload: {
+          channels: [{ name: INTERVAL_TYPES.ORDERBOOK, symbols: [newSymbol] }],
+        },
+      }),
+    );
   }
 
   public disconnect() {

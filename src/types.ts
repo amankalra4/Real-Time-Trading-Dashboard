@@ -1,9 +1,13 @@
+import type { CRYPTO_ITEMS } from "./utils/constants";
+
+export type ITickerKeys = typeof CRYPTO_ITEMS[number];
+
 export interface ITickerResponse {
   funding_rate: string;
   last_price: string;
   mark_price: string;
   open_interest: number;
-  symbol: string;
+  symbol: ITickerKeys;
   timestamp: number;
   turnover_24h: number;
   type: "v2/ticker";
