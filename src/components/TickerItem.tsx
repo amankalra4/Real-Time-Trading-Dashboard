@@ -1,16 +1,25 @@
 import React from "react";
 import { useStore } from "../store";
-import { _24HOUR_PERCENT_CHANGE_INITIAL_VALUE, NO_VALUE } from "../utils/constants";
+import { socketManager } from "../services/websocket";
+import {
+  _24HR_PERCENT_CHANGE_INITIAL_VALUE,
+  NO_VALUE
+} from "../utils/constants";
+import type { ITickerKeys } from "../types";
 
-const TickerItem = ({ symbol }: { symbol: keyof typeof _24HOUR_PERCENT_CHANGE_INITIAL_VALUE }) => {
+const TickerItem = ({ symbol }: { symbol: ITickerKeys }) => {
   const ticker = useStore((state) => state.tickers[symbol]);
   const isFocused = useStore((state) => state.focusedSymbol === symbol);
 
-  const change = _24HOUR_PERCENT_CHANGE_INITIAL_VALUE[symbol] || { value: "0.00%", isPositive: true };
+  const change = _24HR_PERCENT_CHANGE_INITIAL_VALUE[symbol] || { value: "0.00%", isPositive: true };
+
+  const handleClick = () => {
+    socketManager.changeSymbol(symbol);
+  };
 
   return (
     <div
-      onClick={() => {}}
+      onClick={handleClick}
       className={`flex w-full flex-col cursor-pointer px-4 py-3 border-b-4 transition-colors ${
         isFocused
           ? "border-blue-500 bg-gray-800"

@@ -24,7 +24,7 @@ export const INTERVAL_TYPES = {
   TRADES: "all_trades",
 } as const;
 
-export const _24HOUR_PERCENT_CHANGE_INITIAL_VALUE = {
+export const _24HR_PERCENT_CHANGE_INITIAL_VALUE = {
   BTCUSD: { value: "+2.34%", isPositive: true },
   ETHUSD: { value: "-1.12%", isPositive: false },
   XRPUSD: { value: "+0.89%", isPositive: true },
@@ -78,3 +78,5 @@ export const CRYPTO_COINS_CONFIG: ICryptoConfig = {
     defaultGroup: 0.0001,
   },
 };
+
+export const _10_PERCENT_CHANGE = 0.1;

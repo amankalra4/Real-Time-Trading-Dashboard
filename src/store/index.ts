@@ -35,4 +35,6 @@ export const useStore = create<AppState>((set) => ({
   clearFocusedData: () => set({ orderBook: null }),
 
   grouping: initialConfig.defaultGroup,
+
+  setGrouping: (grouping) => set({ grouping }),
 }));

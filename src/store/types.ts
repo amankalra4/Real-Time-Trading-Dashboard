@@ -19,6 +19,7 @@ export interface AppState {
   setConnectionStatus: (status: AppState["connectionStatus"]) => void;
   updateTickers: (newTickers: Record<ITickerKeys, ITickerResponse>) => void;
   setFocusedSymbol: (symbol: ITickerKeys) => void;
+  setGrouping: (grouping: number) => void;
   updateOrderBook: (ob: IOrderBookResponse) => void;
   clearFocusedData: () => void;
 }

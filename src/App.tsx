@@ -3,6 +3,7 @@ import { socketManager } from "./services/websocket";
 import { useStore } from "./store";
 import Header from "./components/Header";
 import { CONNECTION_STATUS } from "./utils/constants";
+import OrderBook from "./components/OrderBook";
 
 function App() {
   const connectionStatus = useStore((state) => state.connectionStatus);
@@ -21,14 +22,19 @@ function App() {
       <div
         className={`flex h-7 items-center justify-between p-4 ${isConnected ? "bg-green-950" : "bg-red-950"}`}
       >
-        <div className="flex items-center gap-2 text-sm">
+        <div className="flex items-center gap-2 text-sm capitalize">
           <span
             className={`h-2 w-2 rounded-full ${isConnected ? "bg-green-500" : "bg-red-500"}`}
           ></span>
-          {isConnected ? CONNECTION_STATUS.CONNECTED : CONNECTION_STATUS.DISCONNECTED}
+          {isConnected
+            ? CONNECTION_STATUS.CONNECTED
+            : CONNECTION_STATUS.DISCONNECTED}
         </div>
       </div>
       <Header />
+      <div className="flex flex-1 p-4 gap-4">
+        <OrderBook />
+      </div>
     </div>
   );
 }
