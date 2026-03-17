@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import type { AppState } from "./types";
-import { CRYPTO_COINS_CONFIG, FOCUSED_SYMBOL_KEY } from "../utils/constants";
+import { CRYPTO_COINS_CONFIG, FOCUSED_SYMBOL_KEY, MAX_TRADES_ARRAY_LENGTH, TRADES_RETENTION_TIME_MS } from "../utils/constants";
 import type { ITickerKeys, ITickerResponse } from "../types";
 
 const initialSymbol = (localStorage.getItem(FOCUSED_SYMBOL_KEY) as ITickerKeys) || "BTCUSD";
