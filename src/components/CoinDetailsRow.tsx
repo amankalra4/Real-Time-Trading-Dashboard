@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { _10_PERCENT_CHANGE } from "../utils/constants";
 import type { IProcessedLevel } from "../utils/orderbookMath";
 
@@ -79,4 +79,4 @@ const CoinDetailsRow = ({ level, maximum, type }: ICoinDetailsRowProps) => {
   );
 };
 
-export default React.memo(CoinDetailsRow);
+export default CoinDetailsRow;
