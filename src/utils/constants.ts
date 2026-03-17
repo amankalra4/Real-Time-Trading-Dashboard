@@ -84,3 +84,7 @@ export const _10_PERCENT_CHANGE = 0.1;
 export const TRADES_RETENTION_TIME_MS = 60000;
 
 export const MAX_TRADES_ARRAY_LENGTH = 30000;
+
+export const _100_MS = 100;
+
+export const _60_SECONDS_MS = 60000;

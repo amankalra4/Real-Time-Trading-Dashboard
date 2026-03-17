@@ -1,7 +1,7 @@
 import { useMemo, useState, useEffect, useRef } from "react";
 import { useStore } from "../store";
 import { Virtuoso, type VirtuosoHandle } from "react-virtuoso";
-import { CRYPTO_COINS_CONFIG } from "../utils/constants";
+import { _100_MS, _60_SECONDS_MS, CRYPTO_COINS_CONFIG } from "../utils/constants";
 
 const TradesFeed = () => {
   const focusedSymbol = useStore((state) => state.focusedSymbol);
@@ -25,7 +25,7 @@ const TradesFeed = () => {
     let buyVol = 0;
     let sellVol = 0;
     let count = 0;
-    const oneMinAgo = now - 60000;
+    const oneMinAgo = now - _60_SECONDS_MS;
 
     for (const trade of trades) {
       if (trade.timestamp < oneMinAgo) break;
@@ -63,7 +63,7 @@ const TradesFeed = () => {
       const samePrice = currentAgg.price === t.price;
       const sameSide = currentAgg.buyer_role === t.buyer_role;
 
-      if (timeDiff <= 100 && samePrice && sameSide) {
+      if (timeDiff <= _100_MS && samePrice && sameSide) {
         currentAgg.size += t.size;
         currentAgg.aggCount += 1;
       } else {
@@ -184,8 +184,7 @@ const TradesFeed = () => {
                     : "border-l-4 border-transparent"
                   : "border-l-4 border-transparent";
 
-                const finalBorder =
-                  isLarge && !isBuy ? "border-l-4 border-red-500" : borderClass;
+                const finalBorder = isLarge && !isBuy ? "border-l-4 border-red-500" : borderClass;
 
                 return (
                   <div className={`grid grid-cols-3 px-4 py-1 text-sm font-mono cursor-pointer transition-colors ${rowBg} ${finalBorder}`}>
