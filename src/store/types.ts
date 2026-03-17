@@ -21,5 +21,6 @@ export interface AppState {
   setFocusedSymbol: (symbol: ITickerKeys) => void;
   setGrouping: (grouping: number) => void;
   updateOrderBook: (ob: IOrderBookResponse) => void;
+  addTrades: (newTrades: IAllTradesResponse[]) => void;
   clearFocusedData: () => void;
 }

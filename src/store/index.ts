@@ -27,10 +27,29 @@ export const useStore = create<AppState>((set) => ({
       focusedSymbol: symbol,
       grouping: config.defaultGroup,
       orderBook: null,
+      trades: [],
     });
   },
 
   updateOrderBook: (orderBookData) => set({ orderBook: orderBookData }),
+
+  addTrades: (newTrades) => {
+    return set((state) => {
+      const combined = [...newTrades, ...state.trades];
+      const cutoffTime = Date.now() - TRADES_RETENTION_TIME_MS;
+      const staleIndex = combined.findIndex((el) => el.timestamp < cutoffTime);
+
+      if (staleIndex !== -1) {
+        combined.length = staleIndex;
+      }
+
+      if (combined.length > MAX_TRADES_ARRAY_LENGTH) {
+        combined.length = MAX_TRADES_ARRAY_LENGTH;
+      }
+
+      return { trades: combined };
+    });
+  },
 
   clearFocusedData: () => set({ orderBook: null }),
 

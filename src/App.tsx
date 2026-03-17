@@ -4,6 +4,7 @@ import { useStore } from "./store";
 import Header from "./components/Header";
 import { CONNECTION_STATUS } from "./utils/constants";
 import OrderBook from "./components/OrderBook";
+import TradesFeed from "./components/TradesFeed";
 
 function App() {
   const connectionStatus = useStore((state) => state.connectionStatus);
@@ -34,6 +35,7 @@ function App() {
       <Header />
       <div className="flex flex-1 p-4 gap-4">
         <OrderBook />
+        <TradesFeed />
       </div>
     </div>
   );

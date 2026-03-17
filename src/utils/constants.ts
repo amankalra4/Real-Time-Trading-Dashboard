@@ -80,3 +80,7 @@ export const CRYPTO_COINS_CONFIG: ICryptoConfig = {
 };
 
 export const _10_PERCENT_CHANGE = 0.1;
+
+export const TRADES_RETENTION_TIME_MS = 60000;
+
+export const MAX_TRADES_ARRAY_LENGTH = 30000;

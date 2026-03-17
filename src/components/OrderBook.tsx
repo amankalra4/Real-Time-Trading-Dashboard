@@ -40,7 +40,7 @@ const OrderBook = () => {
       <div className="flex justify-between items-center pb-2 border-b border-gray-800 mb-2">
         <div className="flex items-center gap-3">
           <h2 className="text-gray-100 font-bold text-lg flex items-center gap-2">
-            Order Book — {focusedSymbol}
+            Order Book - {focusedSymbol}
           </h2>
           <span className="text-[10px] font-bold tracking-wider bg-yellow-500/20 text-yellow-500 px-1.5 py-0.5 rounded">
             LIVE

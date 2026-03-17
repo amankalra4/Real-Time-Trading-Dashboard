@@ -2,6 +2,7 @@ import { useStore } from "../store";
 import type {
   ITickerResponse,
   IOrderBookResponse,
+  IAllTradesResponse,
   ITickerKeys,
 } from "../types";
 import {
@@ -18,6 +19,7 @@ class WebSocketManager {
   private socket: WebSocket | null = null;
   private tickerData = new Map<ITickerKeys, ITickerResponse>();
   private latestOrderBook: IOrderBookResponse | null = null;
+  private tradesBuffer: IAllTradesResponse[] = [];
   private updateInterval: ReturnType<typeof setInterval> | null = null;
 
   public connect() {
@@ -80,16 +82,24 @@ class WebSocketManager {
         store.updateOrderBook(this.latestOrderBook);
         this.latestOrderBook = null;
       }
+
+      if (this.tradesBuffer.length > 0) {
+        store.addTrades([...this.tradesBuffer]);
+        this.tradesBuffer = [];
+      }
     }, DATA_UPDATE_INTERVAL_MS);
   }
 
-  private handleMessage(data: ITickerResponse | IOrderBookResponse) {
+  private handleMessage(data: ITickerResponse | IOrderBookResponse | IAllTradesResponse) {
     switch (data.type) {
       case INTERVAL_TYPES.TICKER:
         this.tickerData.set(data.symbol, data);
         break;
       case INTERVAL_TYPES.ORDERBOOK:
         this.latestOrderBook = data;
+        break;
+      case INTERVAL_TYPES.TRADES:
+        this.tradesBuffer.unshift(data);
         break;
       default:
         break;
@@ -116,12 +126,16 @@ class WebSocketManager {
 
     store.clearFocusedData();
     this.latestOrderBook = null;
+    this.tradesBuffer = [];
 
     this.socket.send(
       JSON.stringify({
         type: UNSUBSCRIBE_KEY,
         payload: {
-          channels: [{ name: INTERVAL_TYPES.ORDERBOOK, symbols: [oldSymbol] }],
+          channels: [
+            { name: INTERVAL_TYPES.ORDERBOOK, symbols: [oldSymbol] },
+            { name: INTERVAL_TYPES.TRADES, symbols: [oldSymbol] }
+          ],
         },
       }),
     );
@@ -132,7 +146,10 @@ class WebSocketManager {
       JSON.stringify({
         type: SUBSCRIBE_KEY,
         payload: {
-          channels: [{ name: INTERVAL_TYPES.ORDERBOOK, symbols: [newSymbol] }],
+          channels: [
+            { name: INTERVAL_TYPES.ORDERBOOK, symbols: [newSymbol] },
+            { name: INTERVAL_TYPES.TRADES, symbols: [newSymbol] }
+          ],
         },
       }),
     );
