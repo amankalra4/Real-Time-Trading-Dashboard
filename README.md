@@ -14,7 +14,7 @@ A real time crypto trading dashboard built to handle high frequency data.
 
 3. **Start the development server:**
    `yarn dev`
-   And the app will run at `http://localhost:5173`*
+   And the app will run at `http://localhost:5173`
 
 ## Backend Setup
 
