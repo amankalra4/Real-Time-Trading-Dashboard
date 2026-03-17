@@ -11,7 +11,7 @@ const OrderBook = () => {
   const rawOrderBook = useStore((state) => state.orderBook);
   const grouping = useStore((state) => state.grouping);
   const setGrouping = useStore((state) => state.setGrouping);
-  const config = CRYPTO_COINS_CONFIG[focusedSymbol] || CRYPTO_COINS_CONFIG["BTCUSD"];
+  const config = CRYPTO_COINS_CONFIG[focusedSymbol] || CRYPTO_COINS_CONFIG.BTCUSD;
 
   const { bids, asks, metrics, maximum } = useMemo(() => {
     if (!rawOrderBook || !config) {
@@ -79,7 +79,7 @@ const OrderBook = () => {
           <>
             <div className="flex-1">
               <Virtuoso
-                style={{ height: "100%", width: "100%" }}
+                className="virtualizedList"
                 data={asks}
                 initialTopMostItemIndex={Math.max(0, asks.length - 15)}
                 itemContent={(_index, level) => (
@@ -130,7 +130,7 @@ const OrderBook = () => {
 
             <div className="flex-1">
               <Virtuoso
-                style={{ height: "100%", width: "100%" }}
+                className="virtualizedList"
                 data={bids}
                 itemContent={(_index, level) => (
                   <CoinDetailsRow level={level} type="bid" maximum={maximum} />

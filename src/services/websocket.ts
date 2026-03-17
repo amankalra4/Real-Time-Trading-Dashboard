@@ -55,7 +55,7 @@ class WebSocketManager {
     const currentSymbol = useStore.getState().focusedSymbol;
 
     const payload = {
-      type: "subscribe",
+      type: SUBSCRIBE_KEY,
       payload: {
         channels: [
           { name: INTERVAL_TYPES.TICKER, symbols: CRYPTO_ITEMS },

@@ -2,6 +2,7 @@ import { useMemo, useState, useEffect, useRef } from "react";
 import { useStore } from "../store";
 import { Virtuoso, type VirtuosoHandle } from "react-virtuoso";
 import { _100_MS, _60_SECONDS_MS, CRYPTO_COINS_CONFIG } from "../utils/constants";
+import './styles.css';
 
 const TradesFeed = () => {
   const focusedSymbol = useStore((state) => state.focusedSymbol);
@@ -161,7 +162,7 @@ const TradesFeed = () => {
           <>
             <Virtuoso
               ref={virtuosoRef}
-              style={{ height: "100%", width: "100%" }}
+              className="virtualizedList"
               data={aggregatedTrades}
               onScroll={(e) =>
                 setIsAtTop((e.target as HTMLElement).scrollTop < 10)
