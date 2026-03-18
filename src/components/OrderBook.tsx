@@ -25,10 +25,7 @@ const OrderBook = () => {
       config.precision,
     );
 
-    const maxBidTotal =
-      processed.bids.length > 0
-        ? processed.bids[processed.bids.length - 1].total
-        : 0;
+    const maxBidTotal = processed.bids.length > 0 ? processed.bids[processed.bids.length - 1].total : 0;
     const maxAskTotal = processed.asks.length > 0 ? processed.asks[0].total : 0;
     const maximum = Math.max(maxBidTotal, maxAskTotal);
 

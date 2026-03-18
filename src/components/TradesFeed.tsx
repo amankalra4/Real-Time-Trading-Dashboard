@@ -3,6 +3,7 @@ import { useStore } from "../store";
 import { Virtuoso, type VirtuosoHandle } from "react-virtuoso";
 import { _100_MS, _60_SECONDS_MS, CRYPTO_COINS_CONFIG } from "../utils/constants";
 import './styles.css';
+import { formatTime } from "../utils";
 
 const TradesFeed = () => {
   const focusedSymbol = useStore((state) => state.focusedSymbol);
@@ -14,7 +15,7 @@ const TradesFeed = () => {
   const [now, setNow] = useState(() => Date.now());
   const virtuosoRef = useRef<VirtuosoHandle>(null);
 
-  const config = CRYPTO_COINS_CONFIG[focusedSymbol] || CRYPTO_COINS_CONFIG["BTCUSD"];
+  const config = CRYPTO_COINS_CONFIG[focusedSymbol] || CRYPTO_COINS_CONFIG.BTCUSD;
   const baseSymbol = focusedSymbol.replace("USD", "");
 
   useEffect(() => {
@@ -29,7 +30,9 @@ const TradesFeed = () => {
     const oneMinAgo = now - _60_SECONDS_MS;
 
     for (const trade of trades) {
-      if (trade.timestamp < oneMinAgo) break;
+      if (trade.timestamp < oneMinAgo){
+        break;
+      }
       count++;
       if (trade.buyer_role === "taker") {
         buyVol += trade.size;
@@ -76,15 +79,6 @@ const TradesFeed = () => {
     result.push(currentAgg);
     return result;
   }, [displayTrades]);
-
-  const formatTime = (timestamp: number) => {
-    const date = new Date(timestamp);
-    const hour = date.getHours().toString().padStart(2, "0");
-    const minutes = date.getMinutes().toString().padStart(2, "0");
-    const seconds = date.getSeconds().toString().padStart(2, "0");
-    const milliSeconds = date.getMilliseconds().toString().padStart(3, "0");
-    return `${hour}:${minutes}:${seconds}.${milliSeconds}`;
-  };
 
   const handleThresholdChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const val = event.target.value;
@@ -164,9 +158,7 @@ const TradesFeed = () => {
               ref={virtuosoRef}
               className="virtualizedList"
               data={aggregatedTrades}
-              onScroll={(e) =>
-                setIsAtTop((e.target as HTMLElement).scrollTop < 10)
-              }
+              onScroll={(e) => setIsAtTop((e.target as HTMLElement).scrollTop < 10)}
               itemContent={(_index, trade) => {
                 const priceNum = parseFloat(trade.price);
                 const isBuy = trade.buyer_role === "taker";

@@ -4,7 +4,7 @@ import { CRYPTO_COINS_CONFIG, FOCUSED_SYMBOL_KEY, MAX_TRADES_ARRAY_LENGTH, TRADE
 import type { ITickerKeys, ITickerResponse } from "../types";
 
 const initialSymbol = (localStorage.getItem(FOCUSED_SYMBOL_KEY) as ITickerKeys) || "BTCUSD";
-const initialConfig = CRYPTO_COINS_CONFIG[initialSymbol] || CRYPTO_COINS_CONFIG["BTCUSD"];
+const initialConfig = CRYPTO_COINS_CONFIG[initialSymbol] || CRYPTO_COINS_CONFIG.BTCUSD;
 
 export const useStore = create<AppState>((set) => ({
   connectionStatus: "disconnected",
@@ -21,7 +21,7 @@ export const useStore = create<AppState>((set) => ({
 
   setFocusedSymbol: (symbol: ITickerKeys) => {
     localStorage.setItem(FOCUSED_SYMBOL_KEY, symbol);
-    const config = CRYPTO_COINS_CONFIG[symbol] || CRYPTO_COINS_CONFIG["BTCUSD"];
+    const config = CRYPTO_COINS_CONFIG[symbol] || CRYPTO_COINS_CONFIG.BTCUSD;
 
     set({
       focusedSymbol: symbol,

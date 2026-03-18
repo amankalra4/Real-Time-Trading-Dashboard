@@ -22,20 +22,12 @@ const CoinDetailsRow = ({ level, maximum, type }: ICoinDetailsRowProps) => {
   useEffect(() => {
     const prevSize = prevSizeRef.current;
     const currentSize = level.size;
+    const percentChange = Math.abs(currentSize - prevSize) / prevSize;
 
-    if (
-      prevSize > 0 &&
-      Math.abs(currentSize - prevSize) / prevSize >= _10_PERCENT_CHANGE
-    ) {
-      if (rowRef.current) {
+    if (prevSize > 0 && percentChange >= _10_PERCENT_CHANGE && rowRef.current) {
         const flashClass = currentSize > prevSize ? GREEN_FLASH : RED_FLASH;
-
         rowRef.current.classList.remove(GREEN_FLASH, RED_FLASH);
-
-        requestAnimationFrame(() => {
-          rowRef.current?.classList.add(flashClass);
-        });
-      }
+      requestAnimationFrame(() => rowRef.current?.classList.add(flashClass));
     }
 
     prevSizeRef.current = currentSize;
