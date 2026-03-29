@@ -13,24 +13,50 @@ const OrderBook = () => {
   const setGrouping = useStore((state) => state.setGrouping);
   const config = CRYPTO_COINS_CONFIG[focusedSymbol] || CRYPTO_COINS_CONFIG.BTCUSD;
 
-  const { bids, asks, metrics, maximum } = useMemo(() => {
+  const { bids, asks } = useMemo(() => {
     if (!rawOrderBook || !config) {
-      return { bids: [], asks: [], metrics: null, maximum: 0 };
+      return { bids: [], asks: [] };
     }
 
-    const processed = processOrderBook(
+    return processOrderBook(
       rawOrderBook.bids,
       rawOrderBook.asks,
       grouping,
       config.precision,
     );
+  }, [rawOrderBook, grouping, config]);
 
-    const maxBidTotal = processed.bids.length > 0 ? processed.bids[processed.bids.length - 1].total : 0;
-    const maxAskTotal = processed.asks.length > 0 ? processed.asks[0].total : 0;
+  const { metrics, maximum } = useMemo(() => {
+    if (bids.length === 0 || asks.length === 0) {
+      return { metrics: null, maximum: 0 };
+    }
+
+    const maxBidTotal = bids[bids.length - 1].total;
+    const maxAskTotal = asks[0].total;
     const maximum = Math.max(maxBidTotal, maxAskTotal);
 
-    return { ...processed, maximum: maximum };
-  }, [rawOrderBook, grouping, config]);
+    const bestBid = bids[0]?.price || 0;
+    const bestAsk = asks[0]?.price || 0;
+    const midPrice = (bestBid + bestAsk) / 2;
+    const midPriceStr = midPrice.toFixed(2);
+    
+    const spread = (bestAsk - bestBid).toFixed(config?.precision || 2);
+    const spreadBp = ((bestAsk - bestBid) / midPrice * 10000).toFixed(0);
+
+    const visibleBidVolume = bids.slice(0, 20).reduce((sum, level) => sum + level.size, 0);
+    const visibleAskVolume = asks.slice(0, 20).reduce((sum, level) => sum + level.size, 0);
+    const imbalance = visibleAskVolume > 0 ? visibleBidVolume / visibleAskVolume : 1;
+
+    return {
+      metrics: {
+        midPrice: midPriceStr,
+        spread,
+        spreadBp,
+        imbalance,
+      },
+      maximum,
+    };
+  }, [bids, asks, config]);
 
   return (
     <div className="flex-1 flex flex-col gap-3">
@@ -82,6 +108,8 @@ const OrderBook = () => {
                 itemContent={(_index, level) => (
                   <CoinDetailsRow level={level} type="ask" maximum={maximum} />
                 )}
+                computeItemKey={(_index, level) => `ask-${level.priceStr}`}
+                overscan={5}
               />
             </div>
 
@@ -132,6 +160,8 @@ const OrderBook = () => {
                 itemContent={(_index, level) => (
                   <CoinDetailsRow level={level} type="bid" maximum={maximum} />
                 )}
+                computeItemKey={(_index, level) => `bid-${level.priceStr}`}
+                overscan={5}
               />
             </div>
           </>
